@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id "org.springframework.boot" version "2.1.6.RELEASE"
+    id 'application'
     id 'maven-publish'
 }
 
@@ -25,6 +26,13 @@ tasks.withType(JavaCompile) {
 
 springBoot {
     buildInfo()
+}
+
+application {
+    mainClassName = 'com.wxmlabs.hellogradle.springboot2.App'
+    applicationDefaultJvmArgs = ['-Dfile.encoding=UTF-8']
+    distZip.enabled = false
+    distTar.enabled = false
 }
 
 publishing{
