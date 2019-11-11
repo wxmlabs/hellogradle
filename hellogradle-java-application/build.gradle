@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'groovy'
+}
+
+group 'com.wxmlabs.hellogradle'
+version '1.0-SNAPSHOT'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation "commons-cli:commons-cli:1.4"
+
+    testImplementation 'org.codehaus.groovy:groovy-all:2.5.6'
+    testImplementation 'org.spockframework:spock-core:1.2-groovy-2.5'
+    testImplementation 'junit:junit:4.12'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+application {
+    mainClassName = 'com.wxmlabs.hellogradle.app.App'
+    applicationDefaultJvmArgs = ['-Dfile.encoding=UTF-8']
+}
