@@ -7,9 +7,15 @@ plugins {
 group 'com.wxmlabs.hellogradle'
 version '1.0-SNAPSHOT'
 
+configurations {
+    developmentOnly
+    runtimeClasspath.extendsFrom(developmentOnly)
+}
+
 dependencies {
     implementation enforcedPlatform("org.springframework.boot:spring-boot-dependencies:2.1.6.RELEASE")
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
