@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id "org.springframework.boot" version "2.1.6.RELEASE"
     id 'application'
+    id 'war'
     id 'maven-publish'
 }
 
@@ -9,13 +10,19 @@ group 'com.wxmlabs.hellogradle'
 version '1.0-SNAPSHOT'
 
 configurations {
+    bom
+    implementation.extendsFrom(bom)
+    providedCompile.extendsFrom(bom)
+    providedRuntime.extendsFrom(bom)
     developmentOnly
     runtimeClasspath.extendsFrom(developmentOnly)
 }
 
 dependencies {
-    implementation enforcedPlatform("org.springframework.boot:spring-boot-dependencies:2.1.6.RELEASE")
+    bom enforcedPlatform("org.springframework.boot:spring-boot-dependencies:2.1.6.RELEASE")
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    providedCompile 'javax.servlet:javax.servlet-api'
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
@@ -38,7 +45,7 @@ application {
 publishing{
     publications {
         "$project.name"(MavenPublication) {
-            artifact bootJar
+            artifact bootWar
         }
     }
 }
