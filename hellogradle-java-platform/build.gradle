@@ -1,0 +1,43 @@
+plugins {
+    id 'java-platform'
+    id 'maven-publish'
+}
+
+group 'com.wxmlabs.hellogradle'
+version '1.0-SNAPSHOT'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    constraints {
+        // Tools
+        def lombokVersion = "1.18.8"
+        api "org.projectlombok:lombok:${lombokVersion}"
+
+        // API, SDK
+        api "com.alibaba:fastjson:1.2.61"
+        api "com.google.guava:guava:27.0.1-jre"
+        api "commons-cli:commons-cli:1.4"
+        api "commons-codec:commons-codec:1.12"
+        api "commons-io:commons-io:2.6"
+        def bcVersion = "1.62"
+        api "org.bouncycastle:bcpkix-jdk15on:${bcVersion}"
+        api "org.bouncycastle:bcprov-jdk15on:${bcVersion}"
+        api "org.bouncycastle:bcprov-debug-jdk15on:${bcVersion}"
+
+        // Test
+        def spockVersion = "1.2-groovy-2.5"
+        api "org.spockframework:spock-core:${spockVersion}"
+        api "org.spockframework:spock-spring:${spockVersion}"
+    }
+}
+
+publishing {
+    publications {
+        platform(MavenPublication) {
+            from components.javaPlatform
+        }
+    }
+}
