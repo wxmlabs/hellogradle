@@ -1,0 +1,49 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'groovy'
+    id 'maven-publish'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    bom enforcedPlatform(project(':platform'))
+    implementation(project(':library'))
+    implementation 'com.google.guava:guava'
+    implementation "commons-cli:commons-cli:1.4"
+    implementation 'org.apache.commons:commons-pool2'
+    testImplementation 'org.codehaus.groovy:groovy-all'
+    testImplementation 'org.spockframework:spock-core'
+    testImplementation 'junit:junit'
+}
+
+application {
+    applicationName = "${rootProject.name}-${project.name}"
+    mainClassName = 'com.wxmlabs.hellogradle.app.App'
+    applicationDefaultJvmArgs = ['-Dfile.encoding=UTF-8']
+}
+
+publishing {
+    publications {
+        "$project.name"(MavenPublication) {
+            artifactId = "${rootProject.name}-${project.name}"
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            if (project.version.toString().endsWith("SNAPSHOT")) {
+                url 'http://localhost:8081/repository/maven-snapshots/'
+            } else {
+                url 'http://localhost:8081/repository/maven-releases/'
+            }
+            credentials {
+                username 'admin'
+                password 'password'
+            }
+        }
+    }
+}

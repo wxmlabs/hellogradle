@@ -1,0 +1,3 @@
+rootProject.name = 'hellogradle-multi-project'
+
+include 'platform', 'library', 'server', 'client'

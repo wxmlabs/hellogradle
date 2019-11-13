@@ -1,0 +1,53 @@
+group 'com.wxmlabs.hellogradle'
+version '1.0-SNAPSHOT'
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+subprojects {
+    group rootProject.group
+    version rootProject.version
+
+    configurations {
+        bom
+        developmentOnly
+    }
+
+    pluginManager.withPlugin('java') {
+        configurations {
+            implementation.extendsFrom(bom)
+            runtimeClasspath.extendsFrom(developmentOnly)
+        }
+
+        sourceCompatibility = 1.6
+
+        tasks.withType(JavaCompile) {
+            options.encoding = 'UTF-8'
+        }
+
+        tasks.withType(Javadoc) {
+            options.encoding = 'UTF-8'
+        }
+
+        jar {
+            archiveBaseName.set("${rootProject.name}-${project.name}")
+        }
+    }
+
+    pluginManager.withPlugin('war') {
+        configurations {
+            providedCompile.extendsFrom(bom)
+            providedRuntime.extendsFrom(bom)
+        }
+    }
+
+    pluginManager.withPlugin('groovy') {
+        tasks.withType(GroovyCompile) {
+            options.encoding = 'UTF-8'
+        }
+    }
+}
+

@@ -1,0 +1,42 @@
+plugins {
+    id 'java-library'
+    id 'groovy'
+    id 'maven-publish'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    bom enforcedPlatform(project(':platform'))
+    api 'com.alibaba:fastjson'
+    implementation 'com.google.guava:guava'
+    testImplementation 'org.codehaus.groovy:groovy-all'
+    testImplementation 'org.spockframework:spock-core'
+    testImplementation 'junit:junit'
+}
+
+publishing {
+    publications {
+        "$project.name"(MavenPublication) {
+            artifactId = "${rootProject.name}-${project.name}"
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            if (project.version.toString().endsWith("SNAPSHOT")) {
+                url 'http://localhost:8081/repository/maven-snapshots/'
+            } else {
+                url 'http://localhost:8081/repository/maven-releases/'
+            }
+            credentials {
+                username 'admin'
+                password 'password'
+            }
+        }
+    }
+}
+
+publish.dependsOn check

@@ -1,0 +1,55 @@
+plugins {
+    id 'java'
+    id "org.springframework.boot" version "2.1.6.RELEASE"
+    id 'application'
+    id 'war'
+    id 'maven-publish'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    bom enforcedPlatform(project(':platform'))
+    implementation(project(':library'))
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    providedCompile 'javax.servlet:javax.servlet-api'
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+springBoot {
+    buildInfo()
+}
+
+application {
+    applicationName = "${rootProject.name}-${project.name}"
+    mainClassName = 'com.wxmlabs.hellogradle.springboot2.App'
+    applicationDefaultJvmArgs = ['-Dfile.encoding=UTF-8']
+    distZip.enabled = false
+    distTar.enabled = false
+}
+
+publishing {
+    publications {
+        "$project.name"(MavenPublication) {
+            artifactId = "${rootProject.name}-${project.name}"
+            artifact bootWar
+        }
+    }
+    repositories {
+        maven {
+            if (project.version.toString().endsWith("SNAPSHOT")) {
+                url 'http://localhost:8081/repository/maven-snapshots/'
+            } else {
+                url 'http://localhost:8081/repository/maven-releases/'
+            }
+            credentials {
+                username 'admin'
+                password 'password'
+            }
+        }
+    }
+}
