@@ -1,7 +1,10 @@
 package com.wxmlabs.hellogradle.app;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Locale;
 import java.util.PropertyResourceBundle;
@@ -35,7 +38,57 @@ public class App {
         if (locale == null) {
             locale = Locale.getDefault();
         }
-        System.out.println(new App().getGreeting(locale));
+        App app = new App();
+        String greeting = app.getGreeting(locale);
+        try {
+            System.out.println(String.format("Greeting: %s", greeting));
+            String result = app.echo(greeting);
+            System.out.println(String.format("Result: %s", result));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String echo(String input) throws IOException {
+        BufferedReader reader = null;
+        try {
+            HttpURLConnection http = (HttpURLConnection) new URL("http://localhost:8080").openConnection();
+            http.setRequestMethod("POST");
+            http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            http.setUseCaches(false);
+            http.setDoOutput(true);
+            http.setDoInput(true);
+            // request
+            http.connect();
+            OutputStream output = http.getOutputStream();
+            String jsonCmd = "{";
+            jsonCmd += "\"cmd\":\"echo\",";
+            jsonCmd += "\"content\":\"" + input + "\"";
+            jsonCmd += "}";
+            output.write(jsonCmd.getBytes("UTF-8"));
+            output.flush();
+            output.close();
+            // response
+            int code = http.getResponseCode();
+            if (200 == code) {
+                reader = new BufferedReader(
+                        new InputStreamReader(http.getInputStream()));
+                String result = reader.readLine();
+                return result;
+            } else {
+                String msg = String.format("request failed: %s(%d)", http.getResponseMessage(), code);
+                throw new IOException(msg);
+            }
+        } catch (IOException e) {
+            throw e;
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException ignore) {
+                }
+            }
+        }
     }
 
     private static final class EncodingResourceBundleControl
